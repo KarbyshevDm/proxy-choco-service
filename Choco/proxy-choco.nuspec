@@ -2,13 +2,24 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>proxy-choco</id>
-    <version>1.0.0</version>
-    <title>Client and service for installing choco packets without admins</title>
+    <!-- Заполняется командой choco pack --version X.Y.Z -->
+    <version>$chocolateyVersion$</version>
+    <title>Proxy Choco - client and service for installing choco packages without admin</title>
     <authors>KarbyshevDm</authors>
     <owners>KarbyshevDm</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Клиент и служба для установки choco-пакетов без администраторов.</description>
-    <summary>Клиент и служба для установки choco-пакетов без администраторов.</summary>
-    <tags>proxy-choco choco</tags>
+    <projectUrl>https://github.com/KarbyshevDm/proxy-choco-service</projectUrl>
+    <docsUrl>https://github.com/KarbyshevDm/proxy-choco-service/wiki</docsUrl>
+    <bugTrackerUrl>https://github.com/KarbyshevDm/proxy-choco-service/issues</bugTrackerUrl>
+    <repository type="git" url="https://github.com/KarbyshevDm/proxy-choco-service" />
+    <description>Клиент и служба для установки choco-пакетов без прав администратора.</description>
+    <summary>Клиент и служба для установки choco-пакетов без прав администратора.</summary>
+    <releaseNotes>https://github.com/KarbyshevDm/proxy-choco-service/releases</releaseNotes>
+    <tags>chocolatey proxy-choco choco grpc</tags>
   </metadata>
+  <files>
+    <file src="chocolateyInstall.ps1" target="tools\chocolateyInstall.ps1" />
+    <file src="chocolateyUninstall.ps1" target="tools\chocolateyUninstall.ps1" />
+    <file src="chocolateyBeforeModify.ps1" target="tools\chocolateyBeforeModify.ps1" />
+  </files>
 </package>

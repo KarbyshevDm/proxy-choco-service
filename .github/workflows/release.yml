@@ -11,6 +11,10 @@ on:
         description: 'Ручная версия установщика (для тестов)'
         required: true
         default: '0.0.1'
+      publish_to_chocolatey:
+        description: 'Публиковать пакет на Chocolatey после загрузки в GitHub Release'
+        required: false
+        default: 'false'
 
 permissions:
   contents: write
@@ -56,22 +60,22 @@ jobs:
           semantic-release-export-data
 
       - name: Run Semantic Release
-        id: release # Задаем id, чтобы перехватить выходные переменные
+        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
-    
+
       - name: Debug Semantic Release Outputs
         run: |
           echo "=== ВЕСЬ МАССИВ OUTPUTS ШАГА ==="
           echo '${{ toJSON(steps.release.outputs) }}'
           echo "================================"
 
-  # ШАГ 2: Сборка .NET приложения и компиляция Inno Setup
+  # ШАГ 2: Сборка .NET приложения, компиляция Inno Setup и упаковка choco-пакета
   build-installer:
-    name: Build & Pack Installer
+    name: Build & Pack
     runs-on: windows-latest
-    needs: semantic-release # Ждем, пока отработает semantic-release
+    needs: semantic-release
     # Запускаем сборку только если semantic-release создал новый релиз ИЛИ если вы запустили workflow вручную
     if: ${{ needs.semantic-release.outputs.new_release_version != '' || github.event_name == 'workflow_dispatch' }}
     outputs:
@@ -94,6 +98,7 @@ jobs:
           } else {
             $env:INPUT_VERSION
           }
+          if (-not $v) { throw "Версия не задана" }
           "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
         env:
           INPUT_VERSION: ${{ github.event.inputs.version }}
@@ -124,15 +129,68 @@ jobs:
         with:
           name: proxy-choco-exe
           path: Installer/proxy-choco.exe
+          if-no-files-found: error
+
+      # Считаем SHA256 установщика и подставляем его в chocolateyInstall.ps1,
+      # чтобы пакет на Chocolatey проверял целостность скачанного файла.
+      - name: Inject installer checksum into chocolateyInstall.ps1
+        run: |
+          $exe = Join-Path $env:INSTALLER_DIR 'proxy-choco.exe'
+          if (-not (Test-Path $exe)) { throw "Установщик не найден: $exe" }
+          $sha = (Get-FileHash -Path $exe -Algorithm SHA256).Hash.ToLower()
+          $ps1 = Join-Path $env:CHOCO_DIR 'chocolateyInstall.ps1'
+          $content = Get-Content -Path $ps1 -Raw
+          $content = $content -replace [regex]::Escape('__INSTALLER_SHA256__'), $sha
+          Set-Content -Path $ps1 -Value $content -Encoding utf8
+          Write-Host "Checksum injected: $sha"
+        env:
+          INSTALLER_DIR: ${{ github.workspace }}/Installer
+          CHOCO_DIR: ${{ github.workspace }}/Choco
+
+      # Пакуем choco-пакет (.nupkg) с версией релиза.
+      # В nuspec версия задана как $chocolateyVersion$ — choco pack подставит её из --version.
+      - name: Pack Chocolatey package
+        uses: crazy-max/ghaction-chocolatey@v4
+        with:
+          args: >-
+            pack ${{ github.workspace }}/Choco/proxy-choco.nuspec
+            --version ${{ steps.version.outputs.version }}
+            --out ${{ github.workspace }}/Choco/out
+            
+        env:
+          PKG_VERSION: ${{ steps.version.outputs.version }}
+          CHOCO_DIR: ${{ github.workspace }}/Choco
+
+      - name: Collect nupkg
+        run: |
+          $src = Join-Path $env:CHOCO_DIR 'out'
+          $dst = Join-Path $env:WORKSPACE 'choco-package'
+          New-Item -ItemType Directory -Force -Path $dst | Out-Null
+          Copy-Item -Path (Join-Path $src '*.nupkg') -Destination $dst -Force
+          Get-ChildItem $dst
+        env:
+          CHOCO_DIR: ${{ github.workspace }}/Choco
+          WORKSPACE: ${{ github.workspace }}
+
+      - name: Upload nupkg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: proxy-choco-nupkg
+          path: choco-package/*.nupkg
+          if-no-files-found: error
 
   # ШАГ 3: Загрузка инсталлятора в релиз GitHub (ЖДЕТ ВАШЕГО ОДОБРЕНИЯ)
+  # КРИТИЧНО: именно после этой стадии ссылка
+  #   https://github.com/KarbyshevDm/proxy-choco-service/releases/download/vX.Y.Z/proxy-choco.exe
+  # становится доступной — только тогда можно публиковать пакет на Chocolatey,
+  # т.к. chocolateyInstall.ps1 скачивает установщик именно из этого релиза.
   upload-to-github-release:
     name: Approve & Upload to GitHub Release
     runs-on: ubuntu-latest
-    needs: [semantic-release, build-installer] # Ждем завершения первых двух шагов
-    
+    needs: [semantic-release, build-installer]
+
     # КРИТИЧНО: Связываем с окружением GitHub, где настроено ручное одобрение
-    environment: production 
+    environment: production
 
     steps:
       - name: Download artifact
@@ -149,3 +207,34 @@ jobs:
           tag_name: ${{ needs.semantic-release.outputs.new_release_version && format('v{0}', needs.semantic-release.outputs.new_release_version) || github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ШАГ 4: Публикация пакета на Chocolatey (только ПОСЛЕ успешной загрузки в GitHub Release,
+  # чтобы ссылка на установщик уже существовала).
+  publish-to-chocolatey:
+    name: Push package to Chocolatey
+    runs-on: ubuntu-latest
+    needs: [semantic-release, build-installer, upload-to-github-release]
+    if: >-
+      needs.semantic-release.outputs.new_release_version != '' &&
+      (github.event_name != 'workflow_dispatch' || github.event.inputs.publish_to_chocolatey == 'true')
+
+    # Ручное одобрение публикации (можно задать в окружении production)
+    environment: production
+
+    steps:
+      - name: Download nupkg artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: proxy-choco-nupkg
+          path: choco-package
+
+      - name: Find nupkg file and Push to Chocolatey
+        # Используем экшен crazy-max/ghaction-chocolatey
+        # api_key и source передаются отдельными инпутами экшена
+        uses: crazy-max/ghaction-chocolatey@v4
+        with:
+          args: >-
+            push $(find ./choco-package -name "*.nupkg" | head -n 1)
+            --verbose
+          api_key: ${{ secrets.CHOCOLATEY_TOKEN }}
+          source: https://push.chocolatey.org/
