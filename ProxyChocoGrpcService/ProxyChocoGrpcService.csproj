@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <LangVersion>preview</LangVersion>
+	  <OutputType>Exe</OutputType>
+	  <DeleteExistingFiles>false</DeleteExistingFiles>
+	  <ExcludeApp_Data>false</ExcludeApp_Data>
+	  <LaunchSiteAfterPublish>true</LaunchSiteAfterPublish>
+	  <LastUsedBuildConfiguration>Release</LastUsedBuildConfiguration>
+	  <LastUsedPlatform>Any CPU</LastUsedPlatform>
+	  <PublishProvider>FileSystem</PublishProvider>
+	  <PublishUrl>bin\publish\</PublishUrl>
+	  <WebPublishMethod>FileSystem</WebPublishMethod>
+	  <_TargetId>Folder</_TargetId>
+	  <SiteUrlToLaunchAfterPublish />
+	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	  <PublishSingleFile>true</PublishSingleFile>
+	  <ProjectGuid>caebc846-cd1c-44e2-b253-b59b4c7a6075</ProjectGuid>
+	  <SelfContained>true</SelfContained>
+    <PublishTrimmed>true</PublishTrimmed>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <IsPublishable>True</IsPublishable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <IsPublishable>True</IsPublishable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\choco.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.27.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+    <PackageReference Include="Grpc.Tools" Version="2.69.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

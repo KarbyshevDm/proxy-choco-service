@@ -1,0 +1,5 @@
+GetConsoleMode
+SetConsoleMode
+GetStdHandle
+SetConsoleScreenBufferInfoEx
+GetConsoleScreenBufferInfoEx

@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <Configuration>Release</Configuration>
+	  <Platform>Any CPU</Platform>
+	  <PublishDir>bin\Release\net8.0\publish\win-x64\</PublishDir>
+	  <PublishProtocol>FileSystem</PublishProtocol>
+	  <_TargetId>Folder</_TargetId>
+	  <TargetFramework>net8.0</TargetFramework>
+	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	  <SelfContained>true</SelfContained>
+	  <PublishSingleFile>true</PublishSingleFile>
+	  <PublishReadyToRun>false</PublishReadyToRun>
+	  <AssemblyName>proxy-choco</AssemblyName>
+	  <PublishTrimmed>true</PublishTrimmed>
+  </PropertyGroup>
+	<ItemGroup>
+		<None Remove="NativeMethods.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AdditionalFiles Include="NativeMethods.txt" />
+	</ItemGroup>
+
+	
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.27.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
+    <PackageReference Include="Grpc.Net.Common" Version="2.67.0" />
+	<PackageReference Include="NETStandard.Library" Version="2.0.3" />
+   <PackageReference Include="Grpc.Tools" Version="2.68.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+   <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
+     <PrivateAssets>all</PrivateAssets>
+     <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+   </PackageReference>
+  </ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Include="Protos\choco.proto" GrpcServices="Client" />
+	</ItemGroup>
+
+</Project>

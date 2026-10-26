@@ -1,0 +1,105 @@
+name: Build Installer
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Версия установщика (например, 1.2.3)'
+        required: true
+        default: '0.0.1'
+
+permissions:
+  contents: write # КРИТИЧНО: Чтобы загрузить собранный .exe в GitHub Release
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build-installer:
+    name: Build & pack setup
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Шаг определения версии (остается без изменений)
+      - name: Resolve version
+        id: version
+        run: |
+          $v = if ($env:EVENT_NAME -eq 'workflow_dispatch' -and $env:INPUT_VERSION) {
+            $env:INPUT_VERSION
+          } else {
+            $env:GITHUB_REF_NAME -replace '^[vV]', ''
+          }
+          if ($v -notmatch '^\d+\.\d+\.\d+') {
+            throw "Invalid version: '$v'. Expected semver like 1.2.3"
+          }
+          "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+
+      - name: Restore dependencies
+        run: dotnet restore PseudoConsoleGrpcService.sln -p:RestoreSources="https://api.nuget.org/v3/index.json"
+        
+      - name: Build solution
+        run: dotnet build PseudoConsoleGrpcService.sln -p:Configuration=Release -p:RestoreSources="https://api.nuget.org/v3/index.json" --no-restore
+
+      - name: Publish (service + CLI) to publish/bin
+        run: |
+          dotnet publish ProxyChocoGrpcService/ProxyChocoGrpcService.csproj `
+            -p:Configuration=Release `
+            -p:PublishSingleFile=true `
+            -p:SelfContained=true `
+            --output ./publish/bin
+
+          dotnet publish ConsoleApp/ConsoleApp.csproj `
+            -p:Configuration=Release `
+            -p:PublishSingleFile=true `
+            -p:SelfContained=true `
+            --output ./publish/bin
+
+      # Заменяем ручной вызов ISCC на специализированный экшен
+      - name: Compile Inno Setup installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: Setup/setup.iss
+          # Передаем все переменные /D через опции экшена
+          options: >-
+            /DOutputFileName=proxy-choco
+            /DVersion=${{ steps.version.outputs.version }}
+            /DOutputDirectory=${{ github.workspace }}/Installer
+            /DSourceFilesDirectory=${{ github.workspace }}/publish/bin
+
+      - name: Verify installer output
+        run: |
+          $exe = Join-Path $PWD 'Installer/proxy-choco.exe'
+          if (-not (Test-Path $exe)) { throw "Installer not found: $exe" }
+          Get-Item $exe | Format-List Name, Length, LastWriteTime
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Setup
+          path: Installer/proxy-choco.exe
+          retention-days: 365
+
+      # Загрузка готового файла прямо в текущий GitHub Release
+      - name: Upload Installer to GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: Installer/proxy-choco.exe
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

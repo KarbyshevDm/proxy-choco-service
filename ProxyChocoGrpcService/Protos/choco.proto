@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProxyChocoGrpcService";
+
+package choco;
+
+service ProxyChocoService {
+	rpc ExecuteCommand (stream CommandRequest) returns (stream CommandResponse);
+	rpc PseudoConsoleExecCommand(stream CommandRequest) returns (stream CommandResponse);
+}
+
+message CommandRequest {
+	string command = 1;
+	string input = 2;
+	string path = 3;
+	int32 X = 4;
+	int32 Y = 5;
+}
+
+
+message CommandResponse {
+	string output = 1;
+	int32 CursorLeft = 2;
+	int32 CursorTop = 3;
+	string error = 4;
+	string exit = 5;
+	string ReadyToInput = 6;
+	string InPipe = 7;
+	string OutPipe = 8;
+}
