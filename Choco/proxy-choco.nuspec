@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+<package xmlns="http://microsoft.com">
   <metadata>
     <id>proxy-choco</id>
-    <version>$chocolateyVersion$</version>
+    <version>0.0.0</version>
     <title>Proxy Choco - client and service for installing choco packages without admin</title>
     <authors>KarbyshevDm</authors>
     <owners>KarbyshevDm</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <projectUrl>https://github.com/KarbyshevDm/proxy-choco-service</projectUrl>
-    <docsUrl>https://github.com/KarbyshevDm/proxy-choco-service/wiki</docsUrl>
-    <bugTrackerUrl>https://github.com/KarbyshevDm/proxy-choco-service/issues</bugTrackerUrl>
-    <repository type="git" url="https://github.com/KarbyshevDm/proxy-choco-service" />
+    <projectUrl>https://github.com</projectUrl>
+    <packageSourceUrl>https://github.com</packageSourceUrl>
+    <docsUrl>https://github.com/wiki</docsUrl>
+    <bugTrackerUrl>https://github.com/issues</bugTrackerUrl>
     <description>Клиент и служба для установки choco-пакетов без прав администратора.</description>
     <summary>Клиент и служба для установки choco-пакетов без прав администратора.</summary>
-    <releaseNotes>https://github.com/KarbyshevDm/proxy-choco-service/releases</releaseNotes>
+    <releaseNotes>https://github.com/releases</releaseNotes>
     <tags>chocolatey proxy-choco choco grpc</tags>
   </metadata>
   <files>
