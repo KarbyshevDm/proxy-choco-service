@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/KarbyshevDm/proxy-choco-service/compare/v1.0.0...v1.0.1) (2026-10-26)
+
+### Fixes
+
+* add Chocolatey package publishing support ([83793f7](https://github.com/KarbyshevDm/proxy-choco-service/commit/83793f711ff501d1a41562fad5ecee0053c480ea))
+
 ## [1.0.0](https://github.com/KarbyshevDm/proxy-choco-service/compare/...v1.0.0) (2026-10-26)
 
 ### Breaking changes
