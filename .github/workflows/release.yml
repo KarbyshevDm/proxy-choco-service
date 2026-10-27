@@ -236,5 +236,5 @@ jobs:
         with:
           args: >-
             push choco-package/*.nupkg
-            --verbose --source=https://push.chocolatey.org/ \
+            --verbose --source=https://push.chocolatey.org/
             --api-key=${{ secrets.CHOCOLATEY_TOKEN }}
