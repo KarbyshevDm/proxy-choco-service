@@ -1,3 +1,9 @@
+## [1.0.7](https://github.com/KarbyshevDm/proxy-choco-service/compare/v1.0.6...v1.0.7) (2026-10-27)
+
+### Fixes
+
+* Update release.yml ([d86115e](https://github.com/KarbyshevDm/proxy-choco-service/commit/d86115ea8b900f73fb976c063cb65b3a03418cfb))
+
 ## [1.0.6](https://github.com/KarbyshevDm/proxy-choco-service/compare/v1.0.5...v1.0.6) (2026-10-27)
 
 ### Fixes
