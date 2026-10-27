@@ -11,7 +11,6 @@
     <packageSourceUrl>https://github.com/KarbyshevDm/proxy-choco-service</packageSourceUrl>
     <docsUrl>https://github.com/KarbyshevDm/proxy-choco-service/wiki</docsUrl>
     <bugTrackerUrl>https://github.com/KarbyshevDm/proxy-choco-service/issues</bugTrackerUrl>
-    <repository type="git" url="https://github.com/KarbyshevDm/proxy-choco-service" />
     <description>Клиент и служба для установки choco-пакетов без прав администратора.</description>
     <summary>Клиент и служба для установки choco-пакетов без прав администратора.</summary>
     <releaseNotes>https://github.com/KarbyshevDm/proxy-choco-service/releases</releaseNotes>
