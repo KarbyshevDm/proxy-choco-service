@@ -235,6 +235,6 @@ jobs:
         uses: crazy-max/ghaction-chocolatey@v4
         with:
           args: >-
-            push proxy-choco
+            push choco-package/*.nupkg
             --verbose --source=https://push.chocolatey.org/ \
             --api-key=${{ secrets.CHOCOLATEY_TOKEN }}
