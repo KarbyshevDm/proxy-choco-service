@@ -1,3 +1,9 @@
+## [1.0.6](https://github.com/KarbyshevDm/proxy-choco-service/compare/v1.0.5...v1.0.6) (2026-10-27)
+
+### Fixes
+
+* Update proxy-choco.nuspec ([94ce9ba](https://github.com/KarbyshevDm/proxy-choco-service/commit/94ce9ba8bf13a096dee8084cd24d58eafeaf5def))
+
 ## [1.0.5](https://github.com/KarbyshevDm/proxy-choco-service/compare/v1.0.4...v1.0.5) (2026-10-27)
 
 ### Fixes
