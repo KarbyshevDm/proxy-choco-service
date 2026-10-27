@@ -228,17 +228,6 @@ jobs:
           name: proxy-choco-nupkg
           path: choco-package
 
-      - name: Setup choco API key
-        # Используем экшен crazy-max/ghaction-chocolatey
-        # api_key и source передаются отдельными инпутами экшена
-        uses: crazy-max/ghaction-chocolatey@v4
-        with:
-          args: >-
-            apikey --api-key=${{ secrets.CHOCOLATEY_TOKEN }} \
-             --source=https://push.chocolatey.org/ --verbose
-
-    
-
       
       - name: Find nupkg file and Push to Chocolatey
         # Используем экшен crazy-max/ghaction-chocolatey
@@ -247,4 +236,5 @@ jobs:
         with:
           args: >-
             push proxy-choco
-            --verbose --source=https://push.chocolatey.org/
+            --verbose --source=https://push.chocolatey.org/ \
+            --api-key=${{ secrets.CHOCOLATEY_TOKEN }}
