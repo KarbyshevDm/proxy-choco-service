@@ -235,7 +235,7 @@ jobs:
         with:
           args: >-
             choco apikey --api-key ${{ secrets.CHOCOLATEY_TOKEN }} \
-             --source https://push.chocolatey.org/
+             --source=https://push.chocolatey.org/ --verbose
 
     
 
@@ -247,4 +247,4 @@ jobs:
         with:
           args: >-
             push proxy-choco
-            --verbose --source https://push.chocolatey.org/
+            --verbose --source=https://push.chocolatey.org/
