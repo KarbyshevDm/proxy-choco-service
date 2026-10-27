@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/KarbyshevDm/proxy-choco-service/compare/v1.0.4...v1.0.5) (2026-10-27)
+
+### Fixes
+
+* chocolatey package metadata and push workflow ([222ed5b](https://github.com/KarbyshevDm/proxy-choco-service/commit/222ed5bbddb374b365869200e37204baaac6408d))
+
 ## [1.0.4](https://github.com/KarbyshevDm/proxy-choco-service/compare/v1.0.3...v1.0.4) (2026-10-26)
 
 ### Fixes
