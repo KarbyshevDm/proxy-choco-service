@@ -7,14 +7,15 @@
     <authors>KarbyshevDm</authors>
     <owners>KarbyshevDm</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <projectUrl>https://github.com</projectUrl>
-    <packageSourceUrl>https://github.com</packageSourceUrl>
-    <docsUrl>https://github.com/wiki</docsUrl>
-    <bugTrackerUrl>https://github.com/issues</bugTrackerUrl>
+    <projectUrl>https://github.com/KarbyshevDm/proxy-choco-service</projectUrl>
+    <packageSourceUrl>https://github.com/KarbyshevDm/proxy-choco-service</packageSourceUrl>
+    <docsUrl>https://github.com/KarbyshevDm/proxy-choco-service/wiki</docsUrl>
+    <bugTrackerUrl>https://github.com/KarbyshevDm/proxy-choco-service/issues</bugTrackerUrl>
+    <repository type="git" url="https://github.com/KarbyshevDm/proxy-choco-service" />
     <description>Клиент и служба для установки choco-пакетов без прав администратора.</description>
     <summary>Клиент и служба для установки choco-пакетов без прав администратора.</summary>
-    <releaseNotes>https://github.com/releases</releaseNotes>
-    <tags>chocolatey proxy-choco choco grpc</tags>
+    <releaseNotes>https://github.com/KarbyshevDm/proxy-choco-service/releases</releaseNotes>
+    <tags>proxy-choco choco grpc proxy</tags>
   </metadata>
   <files>
     <file src="chocolateyInstall.ps1" target="tools\chocolateyInstall.ps1" />
